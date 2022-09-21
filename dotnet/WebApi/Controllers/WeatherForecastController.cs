@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using WebApi.Context;
 
 namespace WebApi.Controllers;
 
@@ -19,50 +20,12 @@ public class WeatherForecastController : ControllerBase
     }
 
     [HttpGet(Name = "GetWeatherForecast")]
-    public IEnumerable<WeatherForecast> Get()
+    public List<Blog> Get()
     {
-        return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-        {
-            Date = DateTime.Now.AddDays(index),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-        })
-        .ToArray();
-    }
-
-    //Immutable object
-    public record Teacher(string Name, int Age);
-    // {
-    //     public string Name { get; init; }
-    //     public int Age { get; init; }
-    //
-    //     public Teacher()
-    //     {
-    //         
-    //     }
-    // }
-    
-    
-    public class Student
-    {
-        private string Name;
-        private int Age;
+        BlogContext blogContext = new BlogContext
+            (Environment.GetEnvironmentVariable("MysqlConnectionString"));
         
-        public int Grade { get; set; }
-
-        public Student(string name, int age)
-        {
-            Name = name;
-            Age = age;
-        }
+        return blogContext.Blogs.ToList();
     }
-
-    public void GetStudent()
-    {
-        //Target-typed new expression
-        Student student = new("John", 10) { Grade = 1};
-
-        Teacher teacher = new("Bob", 40);
-        // We cannot mutate (change) Age of record value: teacher.Age = 10;
-    }
+    
 }
